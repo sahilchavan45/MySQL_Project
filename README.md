@@ -8,11 +8,12 @@ It demonstrates database querying, joining multiple tables, aggregating data, an
 The goal is to understand sales performance, customer preferences, and revenue distribution across different pizza types, sizes, and categories.
 
 📂 Dataset Information
-File Name	Description
-orders.csv	Contains details of each order placed (order ID, date, time, etc.)
+File Name	        Description
+orders.csv	        Contains details of each order placed (order ID, date, time, etc.)
 order_details.csv	Contains order-level details (pizza ID, quantity, etc.)
-pizzas.csv	Contains information about pizzas (pizza ID, type, size, price)
-pizza_types.csv	Contains pizza categories and descriptions
+pizzas.csv	        Contains information about pizzas (pizza ID, type, size, price)
+pizza_types.csv 	Contains pizza categories and descriptions  
+
 🧱 Database Schema
 
 Relationships:
@@ -23,32 +24,42 @@ order_details ↔ pizzas — linked by pizza_id
 
 pizzas ↔ pizza_types — linked by pizza_type_id
 
+
 Schema Diagram (simplified):
 
 pizza_types (pizza_type_id, name, category, ingredients)
+
         ↑
         │
 pizzas (pizza_id, pizza_type_id, size, price)
+
         ↑
         │
 order_details (order_details_id, order_id, pizza_id, quantity)
+
         ↑
         │
 orders (order_id, date, time)
 
+
 🧮 Key SQL Queries & Insights
+
 🟢 Basic Queries
+
 1️⃣ Total number of orders placed
+
 SELECT COUNT(order_id) AS total_orders
 FROM orders;
 
 2️⃣ Highest-priced pizza
+
 SELECT pizza_id, price
 FROM pizzas
 ORDER BY price DESC
 LIMIT 1;
 
 3️⃣ Most common pizza size ordered
+
 SELECT size, COUNT(size) AS count
 FROM pizzas p
 JOIN order_details od ON p.pizza_id = od.pizza_id
@@ -57,6 +68,7 @@ ORDER BY count DESC
 LIMIT 1;
 
 4️⃣ Top 5 most ordered pizza types
+
 SELECT pt.name, SUM(od.quantity) AS total_quantity
 FROM order_details od
 JOIN pizzas p ON od.pizza_id = p.pizza_id
@@ -66,7 +78,9 @@ ORDER BY total_quantity DESC
 LIMIT 5;
 
 🟡 Intermediate Queries
+
 5️⃣ Total quantity of each pizza category ordered
+
 SELECT pt.category, SUM(od.quantity) AS total_quantity
 FROM order_details od
 JOIN pizzas p ON od.pizza_id = p.pizza_id
@@ -75,17 +89,21 @@ GROUP BY pt.category
 ORDER BY total_quantity DESC;
 
 6️⃣ Category-wise distribution of pizzas
+
 SELECT category, COUNT(name) AS pizza_count
 FROM pizza_types
 GROUP BY category;
 
 7️⃣ Average number of pizzas ordered per day
+
 SELECT ROUND(SUM(od.quantity) / COUNT(DISTINCT o.date), 2) AS avg_pizzas_per_day
 FROM order_details od
 JOIN orders o ON od.order_id = o.order_id;
 
 🔴 Advanced Queries
+
 8️⃣ Top 3 most ordered pizzas by revenue
+
 SELECT pt.name, ROUND(SUM(od.quantity * p.price), 2) AS revenue
 FROM order_details od
 JOIN pizzas p ON od.pizza_id = p.pizza_id
@@ -95,6 +113,7 @@ ORDER BY revenue DESC
 LIMIT 3;
 
 9️⃣ Percentage contribution of each pizza type to total revenue
+
 SELECT pt.name,
        ROUND(SUM(od.quantity * p.price) / 
              (SELECT SUM(od.quantity * p.price)
@@ -107,6 +126,7 @@ GROUP BY pt.name
 ORDER BY revenue_percent DESC;
 
 🔟 Cumulative revenue generated over time
+
 SELECT o.date,
        SUM(od.quantity * p.price) AS daily_revenue,
        SUM(SUM(od.quantity * p.price)) OVER (ORDER BY o.date) AS cumulative_revenue
@@ -116,6 +136,7 @@ JOIN pizzas p ON od.pizza_id = p.pizza_id
 GROUP BY o.date;
 
 1️⃣1️⃣ Top 3 pizzas by revenue in each category
+
 SELECT category, name, revenue
 FROM (
     SELECT pt.category,
@@ -155,8 +176,7 @@ Visualization (optional): Power BI / Excel
 
 Clone the repository
 
-git clone https://github.com/<your-username>/SQL-Pizza-Sales-Project.git
-cd SQL-Pizza-Sales-Project
+git clone https://github.com/sahilchavan45/MySQL_Project/edit/main/README.md
 
 
 Create a new MySQL database
@@ -173,11 +193,17 @@ using MySQL Workbench or the command line.
 Run the SQL queries provided above to analyze the data.
 
 📊 Example Output Metrics
+
 Metric	Value (Example)
+
 Total Orders	21,350
+
 Total Revenue	$817,860
+
 Most Popular Size	Large
+
 Top Pizza Type	Thai Chicken Pizza
+
 
 (These values are illustrative — run the queries for actual results.)
 
